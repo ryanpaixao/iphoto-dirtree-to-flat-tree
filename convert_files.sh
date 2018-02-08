@@ -10,24 +10,100 @@ startingDir=$(pwd)
 ############################
 # functions
 ############################
-checkIfValidPath() {
-  [ -d $1 ]
+checkIfValidPaths() {
+  local srcPath=$1
+  local destPath=$2
+
+  echo ""
+
+  if ! [ -d ${srcPath} ];
+    then
+      echo "'${srcPath}' is not a valid source Path!"  
+      return 1;
+  elif ! [ -d ${destPath} ]; 
+    then
+      echo "'${destPath}' is not a valid destination Path!"
+      return 1;
+  else
+    echo "Converting from '${srcPath}' to '${destPath}'"
+    return 0;
+  fi
+}
+
+copyAndRenameFile() {
+  local fullPath=($1)
+  local destPath=$2
+  local originalName=""
+  local updatedName=""
+  local check=false
+
+  # Create new file name from Path
+  IFS='/' read -ra dirName <<< "$fullPath"
+  for i in "${dirName[@]}"; do
+    if ${check};
+      then
+        if [ "${updatedName}" == "" ]
+          then
+            updatedName=${i}
+        else
+          updatedName=${updatedName}-${i}
+          originalName=${i}
+        fi
+    else
+      if [ "${i}" == "Masters" ]
+        then
+          check=true
+      fi
+    fi
+  done
+
+  # Copy file to Dest dir. Rename file with new file name.
+  if [ "${updatedName}" != "" ]
+    then
+      echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      echo "fullPath >>> ${fullPath}"
+      echo "originalName >>> ${originalName}"
+      echo "updatedName >>> ${updatedName}"
+      echo "destPath >>>> ${destPath}"
+      echo "full destination >>> ${destPath}/${updatedName}"
+      echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      # cp ${fullPath} ${destPath}
+  fi
+  
+}
+
+treeCrawler() {
+  cd $1
+  local initialLocation=$(pwd)
+  local localPaths=($(ls ${initialLocation}))
+  local destPath=$2
+
+  # while the localPaths.length is more than 0
+  while [ ${#localPaths[@]} -gt 0 ]; do
+    local newLocation=${initialLocation}/${localPaths[((${#localPaths[@]}-1))]}
+    
+    if [ -d ${newLocation} ];
+      then
+        cd ${newLocation};
+
+        treeCrawler ${newLocation} ${destPath}
+    else
+      copyAndRenameFile ${newLocation} ${destPath}
+    fi
+
+    unset 'localPaths[((${#localPaths[@]}-1))]'
+  done
 }
 
 convertFiles(){
   local srcPath=$1
   local destPath=$2
 
-  echo ""
+  if checkIfValidPaths ${srcPath} ${destPath};
+    then
+      cd $2 && destPath=$(pwd) && cd ..
 
-  if ! checkIfValidPath ${srcPath};
-    then
-      echo "'${srcPath}' is not a valid source Path!"      
-  elif ! checkIfValidPath ${destPath}; 
-    then
-      echo "'${destPath}' is not a valid destination Path!"
-  else
-    echo "Converting from '${srcPath}' to '${destPath}'"
+      treeCrawler ${srcPath} ${destPath}
   fi
 }
 
@@ -50,8 +126,8 @@ testingMode() {
   echo "As well as output the converted files in to the ./convert_files/ directory"
   echo ""
   echo "=============================================================="
-  echo "Do you want to run a test?"
-  read -p "y or n? " resp
+  echo ""
+  read -p "Do you want to run a test?(y or n) " resp
   echo ""
   case $resp in
     [y]* ) testPrep && echo "Running the test..." && convertFiles ./Masters ./converted_files;;
@@ -67,11 +143,14 @@ testingMode() {
 # Else there IS an ARGUMENT supplied
 if [ $# -eq 2 ] 
   then
-    local srcPath=$1
-    local destPath=$2
+    echo "$1 >>> $1"
+    echo "$2 >>> $2"
 
-    convertFiles srcPath destPath
+    convertFiles $1 $2
 # If there IS NO initial ARGUMENT supplied
 else
-  testingMode 
+  # REMOVE
+  # testingMode 
+  echo "TESTING!!!!!!!!!!!!!!!!!!!!!!!"
+  # convertFiles ./Masters ./converted_files
 fi
