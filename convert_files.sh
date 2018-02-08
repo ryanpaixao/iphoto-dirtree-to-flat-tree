@@ -60,14 +60,7 @@ copyAndRenameFile() {
   # Copy file to Dest dir. Rename file with new file name.
   if [ "${updatedName}" != "" ]
     then
-      echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      echo "fullPath >>> ${fullPath}"
-      echo "originalName >>> ${originalName}"
-      echo "updatedName >>> ${updatedName}"
-      echo "destPath >>>> ${destPath}"
-      echo "full destination >>> ${destPath}/${updatedName}"
-      echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      # cp ${fullPath} ${destPath}
+      cp ${fullPath} ${destPath}/${updatedName}
   fi
   
 }
@@ -150,7 +143,6 @@ if [ $# -eq 2 ]
 # If there IS NO initial ARGUMENT supplied
 else
   # REMOVE
-  # testingMode 
-  echo "TESTING!!!!!!!!!!!!!!!!!!!!!!!"
+  testingMode 
   # convertFiles ./Masters ./converted_files
 fi
