@@ -29,6 +29,19 @@ checkIfValidPaths() {
   fi
 }
 
+copyErrorHandling() {
+  local fullPath=$1
+  local destPath=$2
+  local updatedName=$3
+
+  echo "" >> ${destPath}/convert_files_error.log
+  echo "ERROR!! copying: " >> ${destPath}/convert_files_error.log
+  echo "   SOURCE: ${fullPath}" >> ${destPath}/convert_files_error.log
+  echo "    ->    " >> ${destPath}/convert_files_error.log
+  echo "   DESTINATION: ${destPath}/${updatedName}" >> ${destPath}/convert_files_error.log
+  echo "" >> ${destPath}/convert_files_error.log
+}
+
 copyAndRenameFile() {
   local fullPath=($1)
   local destPath=$2
@@ -59,7 +72,14 @@ copyAndRenameFile() {
   # Copy file to Dest dir. Rename file with new file name.
   if [ "${updatedName}" != "" ]
     then
+      # Actual copy command
       cp -v ${fullPath} ${destPath}/${updatedName}
+
+      # Check if cp spit out an error
+      if [ "$?" != "0" ];
+        then
+          copyErrorHandling ${fullPath} ${destPath} ${updatedName}
+      fi
   fi
   
 }
@@ -94,6 +114,15 @@ convertFiles(){
   if checkIfValidPaths ${srcPath} ${destPath};
     then
       cd $2 && destPath=$(pwd) && cd ..
+      dt=$(date '+%d/%m/%Y %H:%M:%S');
+      
+      # Remove old convert_files_error.log
+      # And create a new one with time and date
+      if [ -f ${destPath}/convert_files_error.log ];
+        then
+          rm ${destPath}/convert_files_error.log
+      fi
+      echo "File Generated at: (Day, Month, Year) ${dt}" >> ${destPath}/convert_files_error.log
 
       treeCrawler ${srcPath} ${destPath}
   fi
