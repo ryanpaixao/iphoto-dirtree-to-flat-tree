@@ -47,9 +47,14 @@ I recommend you try out the test mode first, to make sure it works the way that 
 
 6) Check your destination directory. All you files should be there, copied over, and renamed!!
 
+## Change Log
+##### v1.0.0
+- initial version
+
 ## Troubleshooting
 1) If you attempt to run `./convert_files.sh` and you get an error message saying "Permission denied", do the following:
    - enter in `sudo chmod 755 ./run_first.sh`
       - You will have to enter in your root password
    - enter in `./run_first.sh`
       - The scripts should now have full permission to run
+2) If you're still getting "Permission denied" messages, try running `sudo ./convert_files.sh`. It's possible that your source directory requires higher permission levels to have the files copied.
