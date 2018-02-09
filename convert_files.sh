@@ -5,7 +5,6 @@
 # Script should be run from direct parent directory of 'Masters'
 ###################################################
 
-startingDir=$(pwd)
 
 ############################
 # functions
@@ -60,7 +59,7 @@ copyAndRenameFile() {
   # Copy file to Dest dir. Rename file with new file name.
   if [ "${updatedName}" != "" ]
     then
-      cp ${fullPath} ${destPath}/${updatedName}
+      cp -v ${fullPath} ${destPath}/${updatedName}
   fi
   
 }
@@ -136,9 +135,6 @@ testingMode() {
 # Else there IS an ARGUMENT supplied
 if [ $# -eq 2 ] 
   then
-    echo "$1 >>> $1"
-    echo "$2 >>> $2"
-
     convertFiles $1 $2
 # If there IS NO initial ARGUMENT supplied
 else
