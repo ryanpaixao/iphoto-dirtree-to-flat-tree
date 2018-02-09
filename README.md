@@ -48,8 +48,13 @@ I recommend you try out the test mode first, to make sure it works the way that 
 6) Check your destination directory. All you files should be there, copied over, and renamed!!
 
 ## Change Log
-##### v1.0.0
+##### v1.1
+- Add error handling. Add LICENSE.
+##### v1.0
 - initial version
+
+## Error Log
+Before the copying process starts, a 'convert_files_error.log' file is created with the time and date at the top of the log. If an error occurs during the copy process, the source and destination paths/name will be recorded in the log. Check the log after the copying is finished.
 
 ## Troubleshooting
 1) If you attempt to run `./convert_files.sh` and you get an error message saying "Permission denied", do the following:
