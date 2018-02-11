@@ -10,41 +10,41 @@
 # functions
 ############################
 checkIfValidPaths() {
-  local srcPath=$1
-  local destPath=$2
+  local srcPath="${1}"
+  local destPath="${2}"
 
   echo ""
 
-  if ! [ -d ${srcPath} ];
+  if ! [ -d "${srcPath}" ];
     then
-      echo "'${srcPath}' is not a valid source Path!"  
+      echo "${srcPath}"" is not a valid source Path!"  
       return 1;
-  elif ! [ -d ${destPath} ]; 
+  elif ! [ -d "${destPath}" ]; 
     then
-      echo "'${destPath}' is not a valid destination Path!"
+      echo "${destPath}"" is not a valid destination Path!"
       return 1;
   else
-    echo "Converting from '${srcPath}' to '${destPath}'"
+    echo "Converting from ""${srcPath}"" to ""${destPath}"
     return 0;
   fi
 }
 
 copyErrorHandling() {
-  local fullPath=$1
-  local destPath=$2
-  local updatedName=$3
+  local fullPath="${1}"
+  local destPath="${2}"
+  local updatedName="${3}"
 
-  echo "" >> ${destPath}/convert_files_error.log
-  echo "ERROR!! copying: " >> ${destPath}/convert_files_error.log
-  echo "   SOURCE: ${fullPath}" >> ${destPath}/convert_files_error.log
-  echo "    ->    " >> ${destPath}/convert_files_error.log
-  echo "   DESTINATION: ${destPath}/${updatedName}" >> ${destPath}/convert_files_error.log
-  echo "" >> ${destPath}/convert_files_error.log
+  echo "" >> "${destPath}"/convert_files_error.log
+  echo "ERROR!! copying: " >> "${destPath}"/convert_files_error.log
+  echo "   SOURCE: ""${fullPath}" >> "${destPath}"/convert_files_error.log
+  echo "    ->    " >> "${destPath}"/convert_files_error.log
+  echo "   DESTINATION: ""${destPath}"/"${updatedName}" >> "${destPath}"/convert_files_error.log
+  echo "" >> "${destPath}"/convert_files_error.log
 }
 
 copyAndRenameFile() {
-  local fullPath=($1)
-  local destPath=$2
+  local fullPath=("${1}")
+  local destPath="${2}"
   local originalName=""
   local updatedName=""
   local check=false
@@ -56,10 +56,10 @@ copyAndRenameFile() {
       then
         if [ "${updatedName}" == "" ]
           then
-            updatedName=${i}
+            updatedName="${i}"
         else
-          updatedName=${updatedName}-${i}
-          originalName=${i}
+          updatedName="${updatedName}"-"${i}"
+          originalName="${i}"
         fi
     else
       if [ "${i}" == "Masters" ]
@@ -73,34 +73,34 @@ copyAndRenameFile() {
   if [ "${updatedName}" != "" ]
     then
       # Actual copy command
-      cp -v ${fullPath} ${destPath}/${updatedName}
+      cp -v "${fullPath}" "${destPath}"/"${updatedName}"
 
       # Check if cp spit out an error
       if [ "$?" != "0" ];
         then
-          copyErrorHandling ${fullPath} ${destPath} ${updatedName}
+          copyErrorHandling "${fullPath}" "${destPath}" "${updatedName}"
       fi
   fi
   
 }
 
 treeCrawler() {
-  cd $1
+  cd "${1}"
   local initialLocation=$(pwd)
-  local localPaths=($(ls ${initialLocation}))
+  local localPaths=($(ls "${initialLocation}"))
   local destPath=$2
 
   # while the localPaths.length is more than 0
   while [ ${#localPaths[@]} -gt 0 ]; do
-    local newLocation=${initialLocation}/${localPaths[((${#localPaths[@]}-1))]}
+    local newLocation="${initialLocation}"/${localPaths[((${#localPaths[@]}-1))]}
     
-    if [ -d ${newLocation} ];
+    if [ -d "${newLocation}" ];
       then
-        cd ${newLocation};
+        cd "${newLocation}";
 
-        treeCrawler ${newLocation} ${destPath}
+        treeCrawler "${newLocation}" "${destPath}"
     else
-      copyAndRenameFile ${newLocation} ${destPath}
+      copyAndRenameFile "${newLocation}" "${destPath}"
     fi
 
     unset 'localPaths[((${#localPaths[@]}-1))]'
@@ -108,23 +108,23 @@ treeCrawler() {
 }
 
 convertFiles(){
-  local srcPath=$1
-  local destPath=$2
+  local srcPath="${1}"
+  local destPath="${2}"
 
-  if checkIfValidPaths ${srcPath} ${destPath};
+  if checkIfValidPaths "${srcPath}" "${destPath}";
     then
-      cd $2 && destPath=$(pwd) && cd ..
+      cd "${2}" && destPath=$(pwd) && cd ..
       dt=$(date '+%d/%m/%Y %H:%M:%S');
       
       # Remove old convert_files_error.log
       # And create a new one with time and date
-      if [ -f ${destPath}/convert_files_error.log ];
+      if [ -f "${destPath}"/convert_files_error.log ];
         then
-          rm ${destPath}/convert_files_error.log
+          rm "${destPath}"/convert_files_error.log
       fi
-      echo "File Generated at: (Day, Month, Year) ${dt}" >> ${destPath}/convert_files_error.log
+      echo "File Generated at: (Day, Month, Year) ${dt}" >> "${destPath}"/convert_files_error.log
 
-      treeCrawler ${srcPath} ${destPath}
+      treeCrawler "${srcPath}" "${destPath}"
   fi
 }
 
@@ -164,10 +164,8 @@ testingMode() {
 # Else there IS an ARGUMENT supplied
 if [ $# -eq 2 ] 
   then
-    convertFiles $1 $2
+    convertFiles "${1}" "${2}"
 # If there IS NO initial ARGUMENT supplied
 else
-  # REMOVE
   testingMode 
-  # convertFiles ./Masters ./converted_files
 fi
