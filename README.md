@@ -48,6 +48,8 @@ I recommend you try out the test mode first, to make sure it works the way that 
 6) Check your destination directory. All you files should be there, copied over, and renamed!!
 
 ## Change Log
+##### v1.2
+- Fix space character in dir/file name issue.
 ##### v1.1
 - Add error handling. Add LICENSE.
 ##### v1.0
