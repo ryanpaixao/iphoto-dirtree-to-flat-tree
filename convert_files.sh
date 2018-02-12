@@ -18,13 +18,16 @@ checkIfValidPaths() {
   if ! [ -d "${srcPath}" ];
     then
       echo "${srcPath}"" is not a valid source Path!"  
+      echo ""
       return 1;
   elif ! [ -d "${destPath}" ]; 
     then
       echo "${destPath}"" is not a valid destination Path!"
+      echo ""
       return 1;
   else
-    echo "Converting from ""${srcPath}"" to ""${destPath}"
+    echo "Converting from '""${srcPath}""' to '""${destPath}""'"
+    echo ""
     return 0;
   fi
 }
@@ -37,7 +40,7 @@ copyErrorHandling() {
   echo "" >> "${destPath}"/convert_files_error.log
   echo "ERROR!! copying: " >> "${destPath}"/convert_files_error.log
   echo "   SOURCE: ""${fullPath}" >> "${destPath}"/convert_files_error.log
-  echo "    ->    " >> "${destPath}"/convert_files_error.log
+  echo "       ->    " >> "${destPath}"/convert_files_error.log
   echo "   DESTINATION: ""${destPath}"/"${updatedName}" >> "${destPath}"/convert_files_error.log
   echo "" >> "${destPath}"/convert_files_error.log
 }
@@ -87,8 +90,12 @@ copyAndRenameFile() {
 treeCrawler() {
   cd "${1}"
   local initialLocation=$(pwd)
+
+  # Set IFS to a return charcter, set for `ls` as well as array creation
+  IFS=$'\n'
+
   local localPaths=($(ls "${initialLocation}"))
-  local destPath=$2
+  local destPath="${2}"
 
   # while the localPaths.length is more than 0
   while [ ${#localPaths[@]} -gt 0 ]; do
@@ -105,6 +112,9 @@ treeCrawler() {
 
     unset 'localPaths[((${#localPaths[@]}-1))]'
   done
+
+  # Set IFS back to default
+  IFS=$' \t\n'
 }
 
 convertFiles(){
